@@ -7,6 +7,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import Inspect from 'vite-plugin-inspect'
+import autoprefixer from 'autoprefixer';
 
 const pathSrc = path.resolve(__dirname, 'src')
 
@@ -58,6 +59,7 @@ export default defineConfig({
     }),
 
     Inspect(),
+    
   ],
   // build: {
   //   assetsDir:''
@@ -65,5 +67,12 @@ export default defineConfig({
   base: '/static/pure/',
   esbuild: {
     pure: ['console.log', 'debugger'],
-  }
+  },
+  css: {
+    postcss: {
+      plugins: [
+          autoprefixer
+      ],
+    }
+  },
 })

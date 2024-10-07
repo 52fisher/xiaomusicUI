@@ -1,5 +1,5 @@
 <template>
-<h2>{{ miDeviceList[did].name}}</h2>
+<h2>{{ name }}</h2>
 <div class="poweroff">
     <el-button type="primary" @click="handleCommand('关机')" :icon="SwitchButton" >关机</el-button>
     <el-button type="primary" @click="handleCommand('10分钟后关机')" :icon="SwitchButton" >10分钟后关机</el-button>
@@ -14,14 +14,15 @@
 import { useRoute } from 'vue-router'
 import { SwitchButton } from '@element-plus/icons-vue'
 import Setting from '@/components/Setting.js';
+
 const route = useRoute()
 
-const did=computed(()=>route.params.did)
-
-const { miDeviceList, miDidList } = Setting.getMiDeviceList()
+const did=route.params.did
+const name = route.params.name
+const emits = defineEmits(['updateSetting'])
 const handleCommand = (e) => {
     Setting.sendCmd({
-        did: did.value, cmd: e 
+        did: did, cmd: e 
     })
 }
 // console.log(miDeviceList,miDidList)

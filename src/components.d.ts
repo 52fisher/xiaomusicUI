@@ -7,7 +7,9 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AccordionStyle: typeof import('./components/AccordionStyle.vue')['default']
     ClassicalStyle: typeof import('./components/ClassicalStyle.vue')['default']
+    ControlsPannel: typeof import('./components/ControlsPannel.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElButtonGroup: typeof import('element-plus/es')['ElButtonGroup']
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
@@ -42,20 +44,31 @@ declare module 'vue' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     IconAbout: typeof import('./components/icons/IconAbout.vue')['default']
     IconDelete: typeof import('./components/icons/IconDelete.vue')['default']
-    IconLike: typeof import('./components/icons/IconLike.vue')['default']
-    IconListLoop: typeof import('./components/icons/IconListLoop.vue')['default']
+    IconDevice: typeof import('./components/icons/IconDevice.vue')['default']
+    IconFullscreen: typeof import('./components/icons/IconFullscreen.vue')['default']
+    IconMusicNext: typeof import('./components/icons/IconMusicNext.vue')['default']
+    IconMusicPause: typeof import('./components/icons/IconMusicPause.vue')['default']
+    IconMusicPlay: typeof import('./components/icons/IconMusicPlay.vue')['default']
+    IconMusicPrev: typeof import('./components/icons/IconMusicPrev.vue')['default']
     IconNext: typeof import('./components/icons/IconNext.vue')['default']
     IconPause: typeof import('./components/icons/IconPause.vue')['default']
     IconPlay: typeof import('./components/icons/IconPlay.vue')['default']
     IconPrev: typeof import('./components/icons/IconPrev.vue')['default']
     IconRandom: typeof import('./components/icons/IconRandom.vue')['default']
-    IconSingleLoop: typeof import('./components/icons/IconSingleLoop.vue')['default']
+    IconRepeatAll: typeof import('./components/icons/IconRepeatAll.vue')['default']
+    IconRepeatOne: typeof import('./components/icons/IconRepeatOne.vue')['default']
+    IconShrink: typeof import('./components/icons/IconShrink.vue')['default']
     IconStar: typeof import('./components/icons/IconStar.vue')['default']
+    IconToFullscreen: typeof import('./components/icons/IconToFullscreen.vue')['default']
+    IconToWindow: typeof import('./components/icons/IconToWindow.vue')['default']
     NavMenu: typeof import('./components/NavMenu.vue')['default']
+    Player: typeof import('./components/Player.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    UseMusicList: typeof import('./components/useMusicList')['default']
   }
   export interface ComponentCustomProperties {
+    vInfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

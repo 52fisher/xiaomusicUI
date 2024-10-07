@@ -5,7 +5,7 @@
     </div>
     <div class="content">
       <el-scrollbar height="90vh">
-        <RouterView @updateSetting="updateSetting" />
+        <RouterView @updateSetting="updateSetting" :miEnabledDevices="miEnabledDevices"/>
       </el-scrollbar>
     </div>
   </div>
@@ -33,7 +33,7 @@ onMounted(() => {
     return;
   }
   settingData.value.account && settingData.value.account.length > 0 && localStorage.setItem('AccountState', true)
-
+    loading.value = false;
 })
 
 
@@ -43,7 +43,7 @@ const miEnabledDevices = computedAsync(async () => {
   const devices = settingData.value.devices;
   const miDeviceList =  mi_did.split(',').filter(Boolean).map((item) => {
     return {
-      did: devices[item].did,
+      did: devices[item].did + "",
       name: devices[item].name,
       play_type: devices[item].play_type||0,
     }
@@ -60,7 +60,11 @@ const updateSetting = () => {
 loading.value = false;
 
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
+body{
+  padding: 0;
+  margin: 0;
+}
 .container {
   display: flex;
   justify-content: center;

@@ -30,14 +30,11 @@
             <el-button @click="refreshSetting()">重新拉取设置数据</el-button>
         </el-form-item>
         <el-form-item label="音乐标签、列表控制" label-position="right">
-            <el-tooltip content="新添加到音乐目录的文件必须要刷新列表才会添加到音乐列表中" placement="bottom" effect="light">
-                <el-button @click="handleCmd('刷新音乐列表')">刷新音乐列表</el-button>
-            </el-tooltip>
             <el-tooltip content="本主题使用了列表缓存，可以使用该按钮拉取最新音乐列表" placement="bottom" effect="light">
                 <el-button @click="handleRefreshMusicList()">拉取最新音乐列表</el-button>
             </el-tooltip>
             <el-tooltip content="新旧版本功能不一致，刷新音乐标签可以获得音乐内置的封面、歌词等信息，提高体验" placement="bottom" effect="light">
-                <el-button @click="handleCmd('刷新音乐标签')">刷新音乐标签</el-button>
+                <el-button @click="handleRefreshMusicTag()">刷新音乐标签</el-button>
             </el-tooltip>
         </el-form-item>
         <el-divider />
@@ -47,7 +44,8 @@
                     <el-checkbox :label="item.label" :value="item.did" />
                 </template>
             </el-checkbox-group>
-            <el-text type="warning" v-else>未发现可用的小爱设备，请尝试点击 <b>重新拉取数据</b>或根据<el-link href="https://github.com/hanxi/xiaomusic/issues/99">FAQ</el-link>的内容在网页登录小米账号过网页验证</el-text>
+            <el-text type="warning" v-else>未发现可用的小爱设备，请尝试点击 <b>重新拉取数据</b>或根据<el-link
+                    href="https://github.com/hanxi/xiaomusic/issues/99">FAQ</el-link>的内容在网页登录小米账号过网页验证</el-text>
         </el-form-item>
         <el-form-item label="设备分组配置">
             <el-input v-model="data.group_list" placeholder="did1:组名1,did2:组名1,did3:组名2" />
@@ -175,11 +173,12 @@
 import { ref, toRaw } from 'vue'
 import Setting from '@/components/Setting.js';
 import { Moon, Sunny } from '@element-plus/icons-vue'
-import { useDark, useStorage,computedAsync } from '@vueuse/core'
+import { useDark, useStorage, computedAsync } from '@vueuse/core'
 import Classical from '@/assets/classical.png'
 import Accordion from '@/assets/accordion.gif'
 import useSetting from '@/components/useSetting';
-
+import api from '@/components/ApiList';
+import fetchData from '@/components/fetchData';
 
 const emits = defineEmits(['updateSetting'])
 //切换深色模式
@@ -197,11 +196,11 @@ const miDeviceList = computedAsync(async () => {
 
     const deviceList = await data.value.device_list
     return deviceList.map((item) => {
-            return { label: `${item.hardware} ${item.miotDID} ${item.name}`, did: item.miotDID }
-        })
+        return { label: `${item.hardware} ${item.miotDID} ${item.name}`, did: item.miotDID }
+    })
 })
 //已选中的小米设备
-const checkList =computedAsync(async () => {
+const checkList = computedAsync(async () => {
     const mi_did = await data.value.mi_did;
     return mi_did.split(',')
 }, [])
@@ -243,6 +242,21 @@ const refreshSetting = () => {
     ElMessage({
         message: "已刷新设置数据",
         type: "success",
+    })
+}
+const handleRefreshMusicList = () => {
+    Setting.getMusicList();
+    ElMessage({
+        message: "已刷新音乐列表数据",
+        type: "success",
+    })
+}
+const handleRefreshMusicTag = () => {
+    fetchData(api.refreshMusicTag, {}, (res) => {
+        res.ret == "ok" && ElMessage({
+            message: "刷新音乐标签命令已经发送至后端，请稍后通过播放列表查看结果",
+            type: "success",
+        })
     })
 }
 function onSubmit() {

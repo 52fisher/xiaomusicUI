@@ -5,7 +5,7 @@
  * @param {function} [callback]  回调函数
  * @return {void}
  */
-const fetchData = (url, postData = {}, callback) => {
+const fetchData = (url, postData = "", callback) => {
   fetch(
     url,
     postData

@@ -19,6 +19,7 @@
   "devDependencies": {
     "@iconify/json": "^2.2.245",
     "@vitejs/plugin-vue": "^5.0.5",
+    "autoprefixer": "^10.4.20",
     "sass-embedded": "^1.78.0",
     "unplugin-auto-import": "^0.18.2",
     "unplugin-icons": "^0.19.3",

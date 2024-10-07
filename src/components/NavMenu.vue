@@ -12,7 +12,7 @@
                     </template>
                     <template v-for="item in miEnabledDevices" :key="item.did">
                         <el-menu-item :index="`/device/${item.did}`"
-                            :route="{ name: 'Device', params: { did: item.did } }">
+                            :route="{ name: 'Device', params: { did: item.did, name: item.name } }">
                             {{ item.name }}
                         </el-menu-item>
                     </template>
@@ -52,7 +52,6 @@ import {
     User,
     VideoPlay,
     Setting as IconSetting,
-    Refresh,
 } from '@element-plus/icons-vue'
 import IconAbout from './icons/IconAbout.vue';
 // import Setting from './Setting.js';
@@ -75,11 +74,11 @@ onMounted(() => {
 })
 onUnmounted(() => {
     window.removeEventListener("resize", handleResize);
-  });
+});
 
 </script>
 <style>
-h2{
-    font-size:clamp(1rem, 2.5vw, 1.5rem)
+h2 {
+    font-size: clamp(1rem, 2.5vw, 1.5rem)
 }
 </style>

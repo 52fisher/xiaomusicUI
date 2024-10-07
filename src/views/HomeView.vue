@@ -5,11 +5,9 @@
     </div>
 </template>
 <script setup>
-import Setting from '@/components/Setting';
 //导入assets中的guidance.png图片
 import guidance from '../assets/guidance.png'
-//首次使用设置 拉取最新设置
-Setting.useSetting()
+const emits = defineEmits(['updateSetting'])
 </script>
 <style>
 img{

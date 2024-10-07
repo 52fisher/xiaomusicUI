@@ -35,7 +35,7 @@
 import { toRaw } from 'vue'
 import Setting from '@/components/Setting.js';
 const data= Setting.useSetting()
-
+const emits = defineEmits(['updateSetting'])
 function onSubmit() {
   Setting.saveSetting(toRaw(data.value))
   Setting.clearSetting()
