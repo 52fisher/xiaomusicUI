@@ -1,7 +1,10 @@
 # xmusic 前端页面
 
 这是一个基于xiaomusic 的使用Vue.js的前端页面，用于展示小爱音箱的操控面板。页面包括设备控制、播放列表、账号设置和设置等功能。
-![图片](https://github.com/user-attachments/assets/f52f829a-1851-4f32-a4fd-c538c6f5d501)
+![图片](https://github.com/user-attachments/assets/070994d2-4669-4bf2-aad4-b4ec706cfd7e)
+![recording](https://github.com/user-attachments/assets/e74adcf7-8e83-45a5-ba44-761b23b108d5)
+![图片](https://github.com/user-attachments/assets/a37b48ad-8671-4c73-8794-81da04c3bfeb)
+
 
 ## 安装依赖
 
