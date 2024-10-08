@@ -5,7 +5,7 @@
     </div>
     <div class="content">
       <el-scrollbar height="90vh">
-        <RouterView @updateSetting="updateSetting" :miEnabledDevices="miEnabledDevices"/>
+        <RouterView @updateSetting="updateSetting" :miEnabledDevices="miEnabledDevices" />
       </el-scrollbar>
     </div>
   </div>
@@ -27,25 +27,26 @@ const settingData = useSetting();
 //检测是否有账号信息，如果没有则跳转到设置账号提醒页面
 const accountState = useStorage('AccountState', false);
 
-onMounted(() => {
-  if (!accountState.value) {
+watch(() => settingData.value.account, (value) => {
+  if(accountState.value){
     loading.value = false;
     return;
   }
-  settingData.value.account && settingData.value.account.length > 0 && localStorage.setItem('AccountState', true)
+  if (value && value.length > 0) {
+    localStorage.setItem('AccountState', true)
     loading.value = false;
+  }
 })
-
 
 const miEnabledDevices = computedAsync(async () => {
 
   const mi_did = await settingData.value.mi_did;
   const devices = settingData.value.devices;
-  const miDeviceList =  mi_did.split(',').filter(Boolean).map((item) => {
+  const miDeviceList = mi_did.split(',').filter(Boolean).map((item) => {
     return {
       did: devices[item].did + "",
       name: devices[item].name,
-      play_type: devices[item].play_type||0,
+      play_type: devices[item].play_type || 0,
     }
   })
   localStorage.setItem('miEnabledDevices', JSON.stringify(miDeviceList))
@@ -61,10 +62,11 @@ loading.value = false;
 
 </script>
 <style lang="scss">
-body{
+body {
   padding: 0;
   margin: 0;
 }
+
 .container {
   display: flex;
   justify-content: center;

@@ -12,7 +12,7 @@
                     </template>
                     <template v-for="item in miEnabledDevices" :key="item.did">
                         <el-menu-item :index="`/device/${item.did}`"
-                            :route="{ name: 'Device', params: { did: item.did, name: item.name } }">
+                            :route="{ name: 'Device', params: { did: item.did } }">
                             {{ item.name }}
                         </el-menu-item>
                     </template>

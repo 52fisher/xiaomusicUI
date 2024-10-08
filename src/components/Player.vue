@@ -98,8 +98,6 @@ import IconRepeatOne from './icons/IconRepeatOne.vue'
 import IconRandom from './icons/IconRandom.vue'
 import IconToFullscreen from './icons/IconToFullscreen.vue'
 import IconToWindow from './icons/IconToWindow.vue'
-// import IconShrink from './icons/IconShrink.vue'
-
 import IconStar from './icons/IconStar.vue'
 
 import api from './ApiList'
@@ -533,12 +531,6 @@ watch(isMiniPlayer, (value) => {
 
 <style scoped lang="scss">
 //导入字体
-@font-face {
-  font-family: 'AliDFKai';
-  src: url('@/assets/AlimamaDongFangDaKai-Regular.woff2');
-  font-weight: normal;
-  font-style: normal
-}
 
 @font-face {
   font-family: 'AliFY';
