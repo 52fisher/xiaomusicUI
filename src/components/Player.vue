@@ -53,7 +53,7 @@
             <el-slider v-model="volume" @change="changeVolume" :max="1" :min="0" :step="0.01" />
           </div>
           <!-- 收藏歌曲 -->
-          <div class="music_star" v-if="currentDeviceDid!=='0'" @click="FavoriteSong">
+          <div class="music_star" v-if="currentDeviceDid !== '0'" @click="FavoriteSong">
             <IconStar />
           </div>
           <!-- 收缩列表 -->
@@ -98,8 +98,6 @@ import IconRepeatOne from './icons/IconRepeatOne.vue'
 import IconRandom from './icons/IconRandom.vue'
 import IconToFullscreen from './icons/IconToFullscreen.vue'
 import IconToWindow from './icons/IconToWindow.vue'
-// import IconShrink from './icons/IconShrink.vue'
-
 import IconStar from './icons/IconStar.vue'
 
 import api from './ApiList'
@@ -146,7 +144,7 @@ const currentDevice = useStorage('currentDevice', { name: "本机", did: "0", pl
 const currentDeviceDid = useStorage('currentDeviceDid', "0");
 const currentDeviceName = computed(() => {
   // return currentDeviceDid.value=="0" ? "本机":
-  if(currentDeviceDid.value == "0"){
+  if (currentDeviceDid.value == "0") {
     return "本机"
   }
   return miEnabledDevices.value.find((item) => item.did == currentDeviceDid.value)?.name
@@ -168,7 +166,7 @@ const toggleLoopType = () => {
   //切换循环模式
   loopType.value = (loopType.value + 1) % loopList.length;
   //如果currentDevice的did不为空，则需要发送cmd请求，更改循环模式
-  if (currentDeviceDid.value!=="0") {
+  if (currentDeviceDid.value !== "0") {
     fetchData(api.sendCmd, {
       did: currentDeviceDid.value,
       cmd: loopList[loopType.value]
@@ -305,11 +303,12 @@ const togglePlay = () => {
       //暂停后应该停止定时器
       synctimer.value && clearInterval(synctimer.value)
       playState.value = false;
+      ElMessage({
+        message: '已发送 关机 指令给 ' + currentDeviceName.value,
+        type: 'success',
+      })
     })
-    ElMessage({
-      message: '已发送 关机 指令给 ' + currentDeviceName.value,
-      type: 'success',
-    })
+
     return;
   }
 
@@ -358,7 +357,7 @@ const updateCurrentTime = (event) => {
 // 调节音量
 const changeVolume = () => {
   audio.value.volume = volume.value;
-  if (currentDeviceDid.value!=="0") {
+  if (currentDeviceDid.value !== "0") {
     //用fetchData改写
     fetchData(api.setVolume, {
       did: currentDeviceDid.value,
@@ -400,7 +399,7 @@ const handleTrackEnd = () => {
 // 调节播放进度
 const seek = () => {
   //remote的音乐无法选择播放进度
-  if (currentDeviceDid.value!=="0") {
+  if (currentDeviceDid.value !== "0") {
     ElMessage({
       message: "远程设备无法选择播放进度",
       type: 'error',
@@ -483,7 +482,7 @@ const isCurrentLine = (index) => {
 //使用autoplay时playState变得不可靠，自动更新状态存在问题，必须在挂载完成后,监听audio的播放状态,修正状态
 onMounted(() => {
   // If the current device is a remote device, start the timer
-  if (currentDeviceDid.value!=="0") {
+  if (currentDeviceDid.value !== "0") {
     syncRemoteMusicInfo()
     // Set the timer to sync the music info every second
     synctimer.value = setInterval(syncRemoteMusicInfo, 1000)
@@ -519,8 +518,8 @@ watch(isMiniPlayer, (value) => {
   if (!value) {
     body.add("no-scroll")
     setTimeout(() => {
-      
-    lyricsContainer.value && (lyricsContainer.value.style.backgroundImage = `url(${currentTrack.value.cover})`); 
+
+      lyricsContainer.value && (lyricsContainer.value.style.backgroundImage = `url(${currentTrack.value.cover})`);
 
     }, 500)
     return;
@@ -533,12 +532,6 @@ watch(isMiniPlayer, (value) => {
 
 <style scoped lang="scss">
 //导入字体
-@font-face {
-  font-family: 'AliDFKai';
-  src: url('@/assets/AlimamaDongFangDaKai-Regular.woff2');
-  font-weight: normal;
-  font-style: normal
-}
 
 @font-face {
   font-family: 'AliFY';
