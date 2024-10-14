@@ -1,8 +1,8 @@
 import { ref } from "vue";
 
 // 根据fastapi生成对应接口参数信息
-const base = "http://192.168.6.131:5678/";
-// const base = "/";
+// const base = "http://192.168.6.131:5678/";
+const base = "/";
 const api = ref({
   getVolume: "getvolume?did=", // get {did}
   setVolume: "setvolume", // post {volume , did}

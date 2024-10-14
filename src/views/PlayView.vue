@@ -79,7 +79,7 @@ const miEnabledDevicesWithLocal = computed(() => {
 })
 const currentDeviceName = computed(() => {
 
-  return miEnabledDevicesWithLocal.value.find((item) => item.did == currentDeviceDid.value)?.name
+    return miEnabledDevicesWithLocal.value.find((item) => item.did == currentDeviceDid.value)?.name
 })
 
 const list = computed(() => {
@@ -212,12 +212,12 @@ const musicSearch = (name) => {
 const handleSearch = () => {
     // playState.value = 0;
     //cmd
-    if (currentDeviceDid.value!="0") {
+    if (currentDeviceDid.value != "0") {
         Setting.sendCmd({
             did: currentDeviceDid.value,
             cmd: '播放歌曲' + searchMusicName.value + '|',
         })
-        return 
+        return
     }
     console.log('%csrc\views\PlayView.vue:233 searchMusicName.name', 'color: #007acc;', searchMusicName.name);
     handlePlay(searchMusicName.value)
@@ -235,7 +235,7 @@ const handlePlayAll = () => {
         return;
     }
     // If the current device is a remote device, send the cmd to the backend
-    if (currentDeviceDid.value!="0") {
+    if (currentDeviceDid.value != "0") {
         // Use fetchData to send the request
         fetchData(api.sendCmd, {
             did: currentDeviceDid.value,
@@ -260,7 +260,7 @@ const handlePlayAll = () => {
 const handlePlay = (name) => {
     // If the current device is a remote device, send the cmd to the backend
     console.log('%csrc\views\PlayView.vue:278 接收到歌曲名称 name', 'color: #007acc;', name, currentDeviceDid.value);
-    if (currentDeviceDid.value!="0") {
+    if (currentDeviceDid.value != "0") {
         //使用fetchData改写
         fetchData(api.sendCmd, {
             did: currentDeviceDid.value,
@@ -282,7 +282,7 @@ const handlePlay = (name) => {
 const nextTrack = () => {
     // console.log('%csrc\views\ListView.vue:111 list.value', 'color: #007acc;', list.value);
     //miEnabledDevices的did不为空，则说明是小爱设备，应该发送cmd命令控制上一首或下一首
-    if (currentDeviceDid.value!="0") {
+    if (currentDeviceDid.value != "0") {
         fetchData(api.sendCmd, {
             did: currentDeviceDid.value,
             cmd: '下一首'
@@ -302,7 +302,7 @@ const nextTrack = () => {
     handlePlay(list.value[index])
 }
 const prevTrack = () => {
-    if (currentDeviceDid.value!="0") {
+    if (currentDeviceDid.value != "0") {
         fetchData(api.sendCmd, {
             did: currentDeviceDid.value,
             cmd: '上一首'

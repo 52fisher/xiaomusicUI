@@ -8,7 +8,6 @@
           </el-form-item>
           <el-form-item label="XIAOMUSIC_HOSTNAME(IP或域名)">
             <el-input v-model="data.hostname" >
-                <template #prepend>http://</template>
             </el-input>
           </el-form-item>
           <el-form-item label="关闭密码验证">
@@ -38,7 +37,6 @@ const data= Setting.useSetting()
 const emits = defineEmits(['updateSetting'])
 function onSubmit() {
   Setting.saveSetting(toRaw(data.value))
-  Setting.clearSetting()
-  Setting.useSetting()
+  emits('updateSetting')
 }
 </script>

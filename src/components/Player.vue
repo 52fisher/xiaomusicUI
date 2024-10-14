@@ -286,7 +286,7 @@ const onLoadedMetadata = (event) => {
 const togglePlay = () => {
   console.log('%csrc\components\Player.vue:275 playState.value', 'color: #007acc;', playState.value);
   // 本地播放直接操作playState即可
-  if (!currentDeviceDid.value) {
+  if (currentDeviceDid.value == "0") {
     // play()和pause()已经通过watch绑定到playState.value上了直接切换即可
     playState.value = !playState.value;
     return;
@@ -319,7 +319,7 @@ const togglePlay = () => {
 };
 // 上一首
 const prevTrack = async () => {
-  !currentDeviceDid.value && (playState.value = false); // 切换前先暂停
+  currentDeviceDid.value == "0" && (playState.value = false); // 切换前先暂停
   if (loopType.value === 2) {
     emit('random-track');
     return;
@@ -330,7 +330,7 @@ const prevTrack = async () => {
 };
 // 下一首
 const nextTrack = async () => {
-  !currentDeviceDid.value && (playState.value = false); // 切换前先暂停
+  currentDeviceDid.value == "0" && (playState.value = false); // 切换前先暂停
   //loopType如果为2，则表示随机播放,抛出随机random-track
   if (loopType.value === 2) {
     emit('random-track');
@@ -504,12 +504,12 @@ watch(() => playState.value, (value) => {
   if (value) {
     audioState?.value?.classList.add('rotate')
     // console.log('%csrc\components\Player.vue:465 audio.value', 'color: #007acc;', audio.value);
-    !currentDeviceDid.value && audio.value?.play();
+    currentDeviceDid.value == "0" && audio.value?.play();
     return;
   }
   audioState.value?.classList.remove('rotate')
 
-  !currentDeviceDid.value && audio.value?.pause();
+  currentDeviceDid.value == "0" && audio.value?.pause();
 })
 //控制栏最大化时将封面传给歌词容器
 watch(isMiniPlayer, (value) => {
