@@ -9,6 +9,8 @@
       <h2>使用说明</h2>
       <p>本项目仅供学习使用，不提供商业用途</p>
       <p>使用有疑问？再看一下指导<el-link href="#/">欢迎页</el-link></p>
+      <h2>返回到主页</h2>
+      <p><el-link type="primary" href="/">主页</el-link></p>
       <h2>反馈</h2>
       <p>
         欢迎提出任何意见和建议，<el-link href="https://github.com/hanxi/xiaomusic">XiaoMusic</el-link>

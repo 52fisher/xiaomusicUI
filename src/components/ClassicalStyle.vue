@@ -4,7 +4,6 @@
             @tab-change="handleTabChange(currentMusicListName)" :stretch="true">
             <template v-for="(item, index) in renderMusicTitleList" :key="index">
                 <el-tab-pane :label="item" :name="item">
-
                     <el-scrollbar height="56vh">
                         <ul class="musiclist" v-infinite-scroll="loadList" :infinite-scroll-disabled="disabled">
                             <template v-for="(v, i) in renderMusicList[item]" :key="i">

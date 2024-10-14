@@ -1,5 +1,5 @@
-// const base = "/";
-const base = "http://192.168.6.131:5678/";
+const base = import.meta.env.VITE_BASE_URL;
+
 const api = {
   getVolume: base + "getvolume?did=", // get {did}
   setVolume: base + "setvolume", // post {volume , did}

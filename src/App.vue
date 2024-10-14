@@ -4,9 +4,7 @@
       <NavMenu :miEnabledDevices="miEnabledDevices" />
     </div>
     <div class="content">
-      <el-scrollbar height="90vh">
-        <RouterView @updateSetting="updateSetting" :miEnabledDevices="miEnabledDevices" />
-      </el-scrollbar>
+      <RouterView @updateSetting="updateSetting" :miEnabledDevices="miEnabledDevices" />
     </div>
   </div>
   <div class="loading_mask" v-loading.fullscreen.lock="loading" element-loading-text="正在缓存设置信息，请稍后"></div>
@@ -28,7 +26,7 @@ const settingData = useSetting();
 const accountState = useStorage('AccountState', false);
 
 watch(() => settingData.value.account, (value) => {
-  if(accountState.value){
+  if (accountState.value) {
     loading.value = false;
     return;
   }
@@ -65,6 +63,8 @@ loading.value = false;
 body {
   padding: 0;
   margin: 0;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .container {
@@ -83,6 +83,7 @@ body {
   min-width: 50vw;
   padding: 20px;
   margin: 0 30px;
+  overflow: hidden;
 }
 
 .loading_mask {

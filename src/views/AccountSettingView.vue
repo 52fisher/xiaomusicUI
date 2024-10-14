@@ -1,4 +1,5 @@
 <template>
+        <el-scrollbar height="85vh">
     <el-form :model="data" label-width="auto" style="max-width: 600px" label-position="top" v-if="data" >
         <el-form-item label="小米账号">
           <el-input v-model="data.account" />
@@ -8,7 +9,6 @@
           </el-form-item>
           <el-form-item label="XIAOMUSIC_HOSTNAME(IP或域名)">
             <el-input v-model="data.hostname" >
-                <template #prepend>http://</template>
             </el-input>
           </el-form-item>
           <el-form-item label="关闭密码验证">
@@ -29,6 +29,7 @@
             <el-button type="primary" @click="onSubmit">保存</el-button>
           </el-form-item>
       </el-form>
+    </el-scrollbar>
 </template>
 <script setup>
 
@@ -38,7 +39,6 @@ const data= Setting.useSetting()
 const emits = defineEmits(['updateSetting'])
 function onSubmit() {
   Setting.saveSetting(toRaw(data.value))
-  Setting.clearSetting()
-  Setting.useSetting()
+  emits('updateSetting')
 }
 </script>
