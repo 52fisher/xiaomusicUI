@@ -81,4 +81,10 @@ onUnmounted(() => {
 h2 {
     font-size: clamp(1rem, 2.5vw, 1.5rem)
 }
+
+@media (max-width: 768px) {
+    h2 {
+        display: none;
+    }
+}
 </style>

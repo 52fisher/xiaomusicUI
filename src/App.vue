@@ -91,4 +91,10 @@ body {
   padding: 0;
   width: 0;
 }
+
+@media (max-width: 768px) {
+  .nav {
+    width: auto;
+  }
+}
 </style>

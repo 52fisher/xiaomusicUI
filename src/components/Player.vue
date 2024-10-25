@@ -609,7 +609,9 @@ watch(isMiniPlayer, (value) => {
     .controls_pannel {
       display: flex;
       gap: 4vw;
-      width: 20vw;
+      width: 30vw;
+      align-items: center;
+      justify-content: center;
     }
 
     .prev,

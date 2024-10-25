@@ -450,4 +450,10 @@ const updateCurrentTrack = (name, remote = false) => {
 .tabs {
     min-height: 480px;
 }
+//媒体查询，宽度小于1200px时 .musiclist_wraper .musiclist 的宽度设置为300px
+@media screen and (max-width: 1200px) {
+    .musiclist_wraper .musiclist {
+        width: 300px;
+    }
+}
 </style>
