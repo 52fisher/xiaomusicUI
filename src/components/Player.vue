@@ -66,7 +66,7 @@
 
       </div>
       <!-- 显示歌词 -->
-      <div class="lyrics-container wordType" ref="lyricsContainer" v-if="!isMiniPlayer">
+      <div class="lyrics-container wordType" ref="lyricsContainer" v-show="!isMiniPlayer">
         <div class="lyrics_wrapper">
           <div class="lyrics" :style="{ top: lyricOffset }" v-if="currentLyric.length > 0">
             <div v-for="(line, index) in currentLyric" :key="index" :class="isCurrentLine(index) ? 'current' : ''">
@@ -517,11 +517,7 @@ watch(isMiniPlayer, (value) => {
   //最大化时
   if (!value) {
     body.add("no-scroll")
-    setTimeout(() => {
-
-      lyricsContainer.value && (lyricsContainer.value.style.backgroundImage = `url(${currentTrack.value.cover})`);
-
-    }, 500)
+    lyricsContainer.value && (lyricsContainer.value.style.backgroundImage = `url(${currentTrack.value.cover})`);
     return;
   }
   //最小化时
@@ -704,6 +700,7 @@ watch(isMiniPlayer, (value) => {
     backdrop-filter: blur(5px);
     background-color: rgba(255, 255, 255, 0.8);
     height: 100%;
+    align-content: center;
   }
 
   .lyrics {
@@ -716,6 +713,7 @@ watch(isMiniPlayer, (value) => {
     text-align: center;
     width: 96vw;
     padding: 0 2vw;
+    filter: blur(1px);
   }
 
   .lyrics_none {
@@ -727,6 +725,7 @@ watch(isMiniPlayer, (value) => {
     color: red;
     font-weight: bold;
     font-size: calc(var(--fz) * 1.2);
+    filter: none!important;
   }
 
 
