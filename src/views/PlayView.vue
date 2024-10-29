@@ -21,10 +21,10 @@
                 </div>
             </el-col>
         </el-row>
-        <ClassicalStyle v-if="musicListStyle == 'classical'" @handle-play="handlePlay"></ClassicalStyle>
-        <AccordionStyle v-else-if="musicListStyle == 'accordion'" @handle-play="handlePlay"></AccordionStyle>
+        <ClassicalStyle v-if="musicListStyle == 'classical'" @handle-play="handlePlay" @handle-delete="handleDelete"></ClassicalStyle>
+        <AccordionStyle v-else-if="musicListStyle == 'accordion'" @handle-play="handlePlay" @handle-delete="handleDelete"></AccordionStyle>
         <Player :currentTrack="currentTrack" @next-track="nextTrack" @prev-track="prevTrack" @random-track="randomTrack"
-            @handle-play="handlePlay" @updateCurrentTrack="updateCurrentTrack">
+            @handle-play="handlePlay" @updateCurrentTrack="updateCurrentTrack" >
         </Player>
 
     </div>
@@ -86,113 +86,6 @@ const list = computed(() => {
     return item ? musicList.value[item] : [];
 })
 
-// const changeVolume = () => {
-//     Setting.setVolume({
-//         did: miEnabledDevices.value,
-//         volume: volume.value
-//     })
-// }
-
-// const handleRemotePlay = (e) => {
-//     //拼接形成参数 {"did":"568532341","cmd":"播放列表全部|嘉宾 - 张远"}
-//     // const config = {
-//     //     did: miEnabledDevices.value,
-//     //     cmd: '播放列表' + currentMusicListName.value + '|' + e
-//     // }
-//     const config = {
-//         did: miEnabledDevices.value,
-//         cmd: '播放歌曲' + e + '|'
-//     }
-//     playState.value = !playState.value
-//     // console.log('%csrc\views\PlayView.vue:66 e', 'color: #007acc;', e);
-//     Setting.sendCmd(config)
-// }
-// const handleRemotePlayAll = (e) => {
-//     // console.log('%csrc\views\PlayView.vue:115 e', 'color: #007acc;', e);
-//     playState.value = !playState.value
-//     Setting.sendCmd({
-//         did: miEnabledDevices.value,
-//         cmd: '播放列表' + e + '|' + toRaw(musicList.value)[e][0]
-//     })
-// }
-// const handlePause = () => {
-//     //修改playstate
-//     playState.value = !playState.value
-//     //cmd 关机
-//     Setting.sendCmd({
-//         did: miEnabledDevices.value,
-//         cmd: '关机'
-//     })
-// }
-// const handlePlay = (e) => {
-//     console.log('%csrc\views\PlayView.vue:119 e', 'color: #007acc;', e);
-//     const { musicInfo, error } = Setting.getMusicUrl(e);
-//     // console.log('%csrc\views\PlayView.vue:121 url', 'color: #007acc;', url);
-//     if (error.value) {
-//         ElMessage({
-//             message: error.value,
-//             type: 'error',
-//             duration: 1000
-//         })
-//         return;
-//     }
-//     playState.value = 1;
-//     watchEffect(() => {
-//         if (musicInfo.value) {
-//             currentMusicName.value = musicInfo.value.name;
-//             musicUrl.value = musicInfo.value.url;
-//         }
-//     })
-// }
-// const handleStar = () => {
-//     //只有currentMusicName 正在播放的音乐才能收藏
-//     if (!currentMusicName.value) {
-//         ElMessage({
-//             message: '只有正在播放的音乐才能收藏哦',
-//             type: 'error',
-//         })
-//         return;
-//     }
-//     const config = {
-//         did: miEnabledDevices.value,
-//         cmd: '加入收藏'
-//     }
-//     // console.log('%csrc\views\PlayView.vue:66 e', 'color: #007acc;', e);
-//     Setting.sendCmd(config)
-// }
-// watchEffect(() => {
-//     musicUrl.value
-// })
-// const handleNext = () => {
-//     //cmd
-//     const config = {
-//         did: miEnabledDevices.value,
-//         cmd: '下一首'
-//     }
-//     Setting.sendCmd(config)
-// }
-// const handlePrev = () => {
-//     //cmd
-//     const config = {
-//         did: miEnabledDevices.value,
-//         cmd: '上一首'
-//     }
-//     Setting.sendCmd(config)
-// }
-// const handleLoop = (loopText) => {
-//     loop.value = (loop.value + 1) % 3;
-//     //延迟发送请求
-//     // console.log('%csrc\views\PlayView.vue:236 loopText', 'color: #007acc;', loopText);
-//     debounce(function () {
-//         const config = {
-//             did: miEnabledDevices.value,
-//             cmd: loopText
-//         }
-//         Setting.sendCmd(config)
-//         Setting.setCache('loop', loop.value)
-//         // console.log('%csrc\views\PlayView.vue:243 cmd命令执行', 'color: #007acc;');
-//     }, 500)()
-// }
 const musicSearch = (name) => {
     if (name == "") {
         return;
@@ -252,93 +145,124 @@ const handlePlayAll = () => {
     // If the current device is a local device, play the first song in the list
     handlePlay(list.value[0])
 }
+
+const handleDelete = (name, tag) => {
+    //应该二次确认
+    ElMessageBox.confirm(
+        '此操作将永久删除该歌曲，是否继续？',
+        '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+    }).then(() => {
+        fetchData(api.delMusic, {
+            name: encodeURIComponent(name)
+        }, () => {
+            musicList.value[tag] = musicList.value[tag].filter((item) => item != name)
+            //如果tag不是全部，则要在全部里面删除
+            if (tag != '全部') {
+                musicList.value['全部'] = musicList.value['全部'].filter((item) => item != name)
+            }
+            ElMessage({
+                message: `已删除 ${name}`,
+                type: 'success',
+            })
+        })
+    }).catch(() => {
+        ElMessage({
+            type: 'info',
+            message: '已取消删除',
+        })
+    })
+}
+
 /**
  * @description: Handle play button click
  * @param {string} name The name of the music to play
  */
 const handlePlay = (name) => {
-    // If the current device is a remote device, send the cmd to the backend
-    console.log('%csrc\views\PlayView.vue:278 接收到歌曲名称 name', 'color: #007acc;', name, currentDeviceDid.value);
-    if (currentDeviceDid.value != "0") {
-        //使用fetchData改写
-        fetchData(api.sendCmd, {
-            did: currentDeviceDid.value,
-            cmd: '播放列表' + currentMusicListName.value + "|" + name
-        }, (res) => {
-            // res.ret == "OK" && showMsg(`已发送 播放${name} 到 ${miEnabledDevices.value.name}`)
-            res.ret == "OK" && ElMessage({
-                message: `已发送 播放${name} 到${currentDeviceName.value}`,
+        // If the current device is a remote device, send the cmd to the backend
+        console.log('%csrc\views\PlayView.vue:278 接收到歌曲名称 name', 'color: #007acc;', name, currentDeviceDid.value);
+        if (currentDeviceDid.value != "0") {
+            //使用fetchData改写
+            fetchData(api.sendCmd, {
+                did: currentDeviceDid.value,
+                cmd: '播放列表' + currentMusicListName.value + "|" + name
+            }, (res) => {
+                // res.ret == "OK" && showMsg(`已发送 播放${name} 到 ${miEnabledDevices.value.name}`)
+                res.ret == "OK" && ElMessage({
+                    message: `已发送 播放${name} 到${currentDeviceName.value}`,
+                    type: 'success',
+                })
+                updateCurrentTrack(name, true)
+            })
+            return;
+        }
+        // If the current device is a local device, play the first song in the list
+
+        updateCurrentTrack(name)
+    }
+    const nextTrack = () => {
+        // console.log('%csrc\views\ListView.vue:111 list.value', 'color: #007acc;', list.value);
+        //miEnabledDevices的did不为空，则说明是小爱设备，应该发送cmd命令控制上一首或下一首
+        if (currentDeviceDid.value != "0") {
+            fetchData(api.sendCmd, {
+                did: currentDeviceDid.value,
+                cmd: '下一首'
+            })
+            ElMessage({
+                message: `已发送 下一首 到${currentDeviceName.value}`,
                 type: 'success',
             })
-            updateCurrentTrack(name, true)
-        })
-        return;
-    }
-    // If the current device is a local device, play the first song in the list
-
-    updateCurrentTrack(name)
-}
-const nextTrack = () => {
-    // console.log('%csrc\views\ListView.vue:111 list.value', 'color: #007acc;', list.value);
-    //miEnabledDevices的did不为空，则说明是小爱设备，应该发送cmd命令控制上一首或下一首
-    if (currentDeviceDid.value != "0") {
-        fetchData(api.sendCmd, {
-            did: currentDeviceDid.value,
-            cmd: '下一首'
-        })
-        ElMessage({
-            message: `已发送 下一首 到${currentDeviceName.value}`,
-            type: 'success',
-        })
-        return;
-    }
-    let index = list.value.indexOf(currentTrack.value.name)
-    if (index === list.value.length - 1) {
-        index = 0
-    } else {
-        index += 1
-    }
-    handlePlay(list.value[index])
-}
-const prevTrack = () => {
-    if (currentDeviceDid.value != "0") {
-        fetchData(api.sendCmd, {
-            did: currentDeviceDid.value,
-            cmd: '上一首'
-        })
-        ElMessage({
-            message: `已发送 上一首 到${currentDeviceName.value}`,
-            type: 'success',
-        })
-        return;
-    }
-    let index = list.value.indexOf(currentTrack.value.name)
-    if (index === 0) {
-        index = list.value.length - 1
-    } else {
-        index -= 1
-    }
-    handlePlay(list.value[index])
-}
-const randomTrack = () => {
-    const index = Math.floor(Math.random() * list.value.length)
-    handlePlay(list.value[index])
-}
-const updateCurrentTrack = (name, remote = false) => {
-    //使用fetchData改写
-    fetchData(api.musicInfoWithTag + encodeURIComponent(name), '', (res) => {
-        currentTrack.value = {
-            name: res.name,
-            url: remote ? "" : res.url,
-            album: res.tags.album,
-            cover: res.tags.picture || cover,
-            lyric: res.tags.lyrics,
-            singer: res.tags.artist
+            return;
         }
-        // Save the current track to local storage
-        localStorage.setItem('currentTrack', JSON.stringify(currentTrack.value))
-    })
-}
+        let index = list.value.indexOf(currentTrack.value.name)
+        if (index === list.value.length - 1) {
+            index = 0
+        } else {
+            index += 1
+        }
+        handlePlay(list.value[index])
+    }
+    const prevTrack = () => {
+        if (currentDeviceDid.value != "0") {
+            fetchData(api.sendCmd, {
+                did: currentDeviceDid.value,
+                cmd: '上一首'
+            })
+            ElMessage({
+                message: `已发送 上一首 到${currentDeviceName.value}`,
+                type: 'success',
+            })
+            return;
+        }
+        let index = list.value.indexOf(currentTrack.value.name)
+        if (index === 0) {
+            index = list.value.length - 1
+        } else {
+            index -= 1
+        }
+        handlePlay(list.value[index])
+    }
+    const randomTrack = () => {
+        const index = Math.floor(Math.random() * list.value.length)
+        handlePlay(list.value[index])
+    }
+    const updateCurrentTrack = (name, remote = false) => {
+        //使用fetchData改写
+        fetchData(api.musicInfoWithTag + encodeURIComponent(name), '', (res) => {
+            currentTrack.value = {
+                name: res.name,
+                url: remote ? "" : res.url,
+                album: res.tags.album,
+                cover: res.tags.picture || cover,
+                lyric: res.tags.lyrics,
+                singer: res.tags.artist
+            }
+            // Save the current track to local storage
+            localStorage.setItem('currentTrack', JSON.stringify(currentTrack.value))
+        })
+    }
 </script>
 <style lang="scss">
 .options {
@@ -450,6 +374,7 @@ const updateCurrentTrack = (name, remote = false) => {
 .tabs {
     min-height: 480px;
 }
+
 //媒体查询，宽度小于1200px时 .musiclist_wraper .musiclist 的宽度设置为300px
 @media screen and (max-width: 1200px) {
     .musiclist_wraper .musiclist {

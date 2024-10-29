@@ -6,15 +6,15 @@
                     <el-collapse-item :title="item" :name="item">
                         <ul class="musiclist">
                             <template v-for="(v, i) in renderMusicList[item]" :key="i">
-                                <li>
+                                <li @dbclick="$emit('handle-play', v)">
                                     <div class="song_info"><el-text>{{ v }}</el-text></div>
                                     <div class="song_opts">
-                                        <el-icon @click="$emit('handlePlay',v)">
+                                        <el-icon @click="$emit('handle-play', v)">
                                             <IconPlay />
                                         </el-icon>
-                                        <!-- <el-icon @click.stop="handleDelete(v, item)">
+                                        <el-icon @click.stop="$emit('handle-delete', v, item)" v-if="showDelBtn">
                                             <IconDelete />
-                                        </el-icon> -->
+                                        </el-icon>
                                     </div>
                                 </li>
                             </template>
@@ -27,20 +27,22 @@
     </div>
     <div class="pagination-block" v-if="musicList">
         <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[6, 10, 12, 15]"
-         layout="total, sizes, prev, pager, next, jumper" :total="total" />
+            layout="total, sizes, prev, pager, next, jumper" :total="total" />
         <!-- @size-change="handleSizeChange" @current-change="handleCurrentChange"  -->
     </div>
 </template>
 <script setup>
 import { useStorage } from '@vueuse/core';
-
+import IconDelete from './icons/IconDelete.vue';
 import useMusicList from './useMusicList';
-defineEmits(['handlePlay'])
+
+defineEmits(['handle-play', 'handle-delete'])
 //所有的musicList都只截取前30首
 const { musicTitleList, musicList } = useMusicList();
 const currentPage = useStorage('currentPage', 1)
 const pageSize = useStorage('pageSize', 6)
 const currentMusicListName = useStorage('currentMusicListName', '全部');
+const showDelBtn = useStorage('showDelBtn', false);
 // const list = useStorage('list',currentMusicListName? musicList.value[currentMusicListName.value]:musicList.value['全部'])
 
 //根据currentPage和pageSize计算当前页的数据
@@ -63,27 +65,9 @@ const renderMusicList = computed(() => {
 const renderMusicTitleList = computed(() => {
     return musicTitleList.value.slice(startIndex.value, endIndex.value)
 })
-// const disabled = computed(() => {
-//     if (currentMusicListName.value) {
-//         return renderMusicList.value[currentMusicListName.value].length >= musicList.value[currentMusicListName.value].length
-//     }
-//     return true;
-// })
+
 const total = computed(() => {
     return Object.keys(musicList.value).length
 })
-// const loadList = () => {
-//     loading.value = true
-//     loadSize.value += 30
 
-// }
-// const handleSizeChange = (val) => {
-//     pageSize.value = val
-// }
-// const handleCurrentChange = (val) => {
-//     currentPage.value = val
-// }
-const handleRemotePlay = (val) => {
-    console.log('%csrc\views\PlayView.vue:155 val', 'color: #007acc;', val);
-}
 </script>

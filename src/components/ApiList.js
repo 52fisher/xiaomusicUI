@@ -11,7 +11,7 @@ const api = {
   getSetting: base + "getsetting?need_device_list=true", //
   getMusicList: base + "musiclist", // get {did}
   getCurPlaylist: base + "curplaylist", // get {did}
-  delMusic: base + "delmusic", // post {mid , did}
+  delMusic: base + "delmusic", // post {name}
   downloadJson: base + "downloadjson", // get {did}
   downloadLog: base + "downloadlog", // get {did}
   playUrl: base + "playurl", // get {mid , did}

@@ -1,21 +1,20 @@
 <template>
     <div class="musiclist_wraper">
-        <el-tabs v-model="currentMusicListName" type="card" class="tabs" v-if="musicList"
-            @tab-change="handleTabChange(currentMusicListName)" :stretch="true">
+        <el-tabs v-model="currentMusicListName" type="card" class="tabs" v-if="musicList" :stretch="true">
             <template v-for="(item, index) in renderMusicTitleList" :key="index">
                 <el-tab-pane :label="item" :name="item">
                     <el-scrollbar height="56vh">
                         <ul class="musiclist" v-infinite-scroll="loadList" :infinite-scroll-disabled="disabled">
                             <template v-for="(v, i) in renderMusicList[item]" :key="i">
-                                <li>
+                                <li @dblclick="$emit('handle-play', v)">
                                     <div class="song_info"><el-text>{{ v }}</el-text></div>
                                     <div class="song_opts">
-                                        <el-icon @click="handlePlay(v)">
+                                        <el-icon @click="$emit('handle-play', v)" title="播放">
                                             <IconPlay />
                                         </el-icon>
-                                        <!-- <el-icon @click.stop="$emit('handleDelete',v, item)">
-                                        <IconDelete />
-                                    </el-icon> -->
+                                        <el-icon @click.stop="$emit('handle-delete', v, item)" title="删除该歌曲" v-if="showDelBtn">
+                                            <IconDelete />
+                                        </el-icon>
                                     </div>
                                 </li>
                             </template>
@@ -29,10 +28,11 @@
 <script setup>
 import { useStorage } from '@vueuse/core';
 import useMusicList from './useMusicList';
-
+import IconDelete from './icons/IconDelete.vue';
 // console.log('%csrc\components\ClassicalStyle.vue:43 musicList.value', 'color: #007acc;', props);
-const emit = defineEmits(['handle-play'])
+defineEmits(['handle-play', 'handle-delete']);
 
+const showDelBtn = useStorage('showDelBtn', false);
 const { musicTitleList, musicList } = useMusicList();
 const currentMusicListName = useStorage('currentMusicListName', '全部');
 currentMusicListName.value == "" && (currentMusicListName.value = "全部");
@@ -54,15 +54,6 @@ const renderMusicList = computed(() => {
     list.value[item] = musicList.value[item].slice(0, endIndex.value);
     return list.value;
 })
-// watchEffect(() => {
-//     const item = currentMusicListName.value;
-//     // renderMusicTitleList.value.forEach((item) => {
-//         // list[item] = musicList.value[item].slice(0, endIndex.value);
-//     // })
-//     // list[item] = musicList.value[item].slice(0, endIndex.value);
-//     renderMusicList.value[item] = musicList.value[item].slice(0, endIndex.value);
-// })
-// console.log('%csrc\components\ClassicalStyle.vue:46 renderMusicList.value', 'color: #007acc;', renderMusicList.value);
 
 const loadList = () => {
     const item = currentMusicListName.value;
@@ -75,10 +66,6 @@ const disabled = computed(() => {
     return renderMusicList.value[currentMusicListName.value].length >= musicList.value[currentMusicListName.value].length
 })
 // console.log('%csrc\components\ClassicalStyle.vue:67 disabled.value', 'color: #007acc;', disabled.value);
-const handleTabChange = (currentMusicListName) => {
-    console.log('%csrc\views\PlayView.vue:287 currentMusicListName', 'color: #007acc;', currentMusicListName);
-    // Setting.setCache('currentMusicListName', currentMusicListName);
-}
 const handlePlay = (v) => {
     console.log('%csrc\components\ClassicalStyle.vue:84 v', 'color: #007acc;', v);
     emit('handle-play', v);

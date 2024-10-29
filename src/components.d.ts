@@ -40,6 +40,7 @@ declare module 'vue' {
     ElText: typeof import('element-plus/es')['ElText']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     IconAbout: typeof import('./components/icons/IconAbout.vue')['default']
+    IconDelete: typeof import('./components/icons/IconDelete.vue')['default']
     IconDevice: typeof import('./components/icons/IconDevice.vue')['default']
     IconMusicNext: typeof import('./components/icons/IconMusicNext.vue')['default']
     IconMusicPause: typeof import('./components/icons/IconMusicPause.vue')['default']

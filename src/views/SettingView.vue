@@ -26,7 +26,11 @@
             </el-form-item>
             <el-form-item label="主题颜色">
                 <el-switch v-model="isDark" :active-action-icon="Moon" :inactive-action-icon="Sunny" active-text="深色主题"
-                    inactive-text="浅色主题" /></el-form-item>
+                    inactive-text="浅色主题" />
+            </el-form-item>
+            <el-form-item label="播放列表显示删除按钮">
+                <el-switch v-model="showDelBtn" />
+                </el-form-item>
             <el-form-item label="本地数据操作">
                 <el-button @click="refreshSetting()">重新拉取设置数据</el-button>
             </el-form-item>
@@ -187,6 +191,8 @@ import fetchData from '@/components/fetchData';
 const emits = defineEmits(['updateSetting'])
 //切换深色模式
 const isDark = useDark()
+//展示删除按钮
+const showDelBtn = useStorage('showDelBtn', false);
 //设置数据
 const data = useSetting();
 //音乐列表样式，classical为经典样式，accordion为手风琴样式
