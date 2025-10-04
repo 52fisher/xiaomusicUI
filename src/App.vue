@@ -80,7 +80,7 @@ body {
 }
 
 .content {
-  min-width: 50vw;
+  width: 50vw;
   padding: 20px;
   margin: 0 30px;
   overflow: hidden;

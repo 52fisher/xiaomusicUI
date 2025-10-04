@@ -4,70 +4,190 @@
             <el-collapse v-model="currentMusicListName" accordion>
                 <template v-for="(item, index) in renderMusicTitleList" :key="index">
                     <el-collapse-item :title="item" :name="item">
-                        <ul class="musiclist">
+                        <ul class="musiclist" v-infinite-scroll="() => loadMore(item)" :infinite-scroll-disabled="isListFullyLoaded(item)">
                             <template v-for="(v, i) in renderMusicList[item]" :key="i">
-                                <li @dbclick="$emit('handle-play', v)">
+                                <li @dblclick="handlePlay(v)">
                                     <div class="song_info"><el-text>{{ v }}</el-text></div>
                                     <div class="song_opts">
-                                        <el-icon @click="$emit('handle-play', v)">
+                                        <el-icon @click="handlePlay(v)">
                                             <IconPlay />
                                         </el-icon>
-                                        <el-icon @click.stop="$emit('handle-delete', v, item)" v-if="showDelBtn">
+                                        <el-icon @click.stop="handleDelete(v, item)" v-if="showDelBtn">
                                             <IconDelete />
                                         </el-icon>
                                     </div>
                                 </li>
                             </template>
+                            <li v-if="!isListFullyLoaded(item)" class="loading">加载中...</li>
                         </ul>
                     </el-collapse-item>
                 </template>
             </el-collapse>
         </el-scrollbar>
-
     </div>
     <div class="pagination-block" v-if="musicList">
-        <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[6, 10, 12, 15]"
-            layout="total, sizes, prev, pager, next, jumper" :total="total" />
-        <!-- @size-change="handleSizeChange" @current-change="handleCurrentChange"  -->
+        <el-pagination 
+            layout="total, sizes, prev, pager, next, jumper" 
+            :total="total" 
+            v-model:current-page="currentPage" 
+            v-model:page-size="pageSize"
+            :page-sizes="[10, 20, 30, 50, 100]"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+        />
     </div>
 </template>
 <script setup>
 import { useStorage } from '@vueuse/core';
 import IconDelete from './icons/IconDelete.vue';
 import useMusicList from './useMusicList';
+import { ElMessage } from 'element-plus';
 
-defineEmits(['handle-play', 'handle-delete'])
-//所有的musicList都只截取前30首
+const emit = defineEmits(['handle-play', 'handle-delete'])
 const { musicTitleList, musicList } = useMusicList();
 const currentPage = useStorage('currentPage', 1)
-const pageSize = useStorage('pageSize', 6)
+const pageSize = useStorage('pageSize', 20)
 const currentMusicListName = useStorage('currentMusicListName', '全部');
 const showDelBtn = useStorage('showDelBtn', false);
-// const list = useStorage('list',currentMusicListName? musicList.value[currentMusicListName.value]:musicList.value['全部'])
 
-//根据currentPage和pageSize计算当前页的数据
+// 每个分类的加载数量状态
+const categoryLoadSizes = ref({});
+// 每批加载的歌曲数量
+const batchSize = 50;
 
+// 根据currentPage和pageSize计算当前页的分类数据
 const startIndex = computed(() => (currentPage.value - 1) * pageSize.value);
 const endIndex = computed(() => startIndex.value + pageSize.value);
-//musicList是个对象 不能使用slice
-//每次加载的数量
-// const loadSize = ref(30);//当前加载的数量
-const renderMusicList = computed(() => {
-    let music_list = {};
-    for (let i = startIndex.value; i < endIndex.value; i++) {
-        const key = musicTitleList.value[i];
-        // music_list[key] = musicList.value[key].slice(0, loadSize.value);
-        music_list[key] = musicList.value[key];
-    }
-    return music_list;
-})
 
+// 渲染的分类列表
 const renderMusicTitleList = computed(() => {
     return musicTitleList.value.slice(startIndex.value, endIndex.value)
 })
 
+// 计算总分类数
 const total = computed(() => {
     return Object.keys(musicList.value).length
 })
 
+// 渲染的音乐列表，按需加载每个分类下的歌曲
+const renderMusicList = computed(() => {
+    let music_list = {};
+    
+    for (let i = startIndex.value; i < endIndex.value; i++) {
+        const key = musicTitleList.value[i];
+        if (key && musicList.value[key]) {
+            // 获取该分类当前应加载的数量
+            const loadSize = categoryLoadSizes.value[key] || batchSize;
+            // 只加载指定数量的歌曲
+            music_list[key] = musicList.value[key].slice(0, loadSize);
+        }
+    }
+    
+    return music_list;
+})
+
+// 加载更多歌曲
+const loadMore = (category) => {
+    if (isListFullyLoaded(category)) return;
+    
+    // 更新该分类的加载数量
+    const currentSize = categoryLoadSizes.value[category] || batchSize;
+    const totalItems = musicList.value[category]?.length || 0;
+    const newSize = Math.min(currentSize + batchSize, totalItems);
+    
+    categoryLoadSizes.value[category] = newSize;
+    
+    // 如果已经加载了所有歌曲，显示提示
+    if (newSize >= totalItems) {
+        ElMessage({ message: `已加载完${category}分类的所有歌曲`, type: 'info', duration: 1500 });
+    }
+}
+
+// 检查列表是否已完全加载
+const isListFullyLoaded = (category) => {
+    const loadSize = categoryLoadSizes.value[category] || batchSize;
+    const totalItems = musicList.value[category]?.length || 0;
+    return loadSize >= totalItems;
+}
+
+// 重置当前页面时，也重置加载状态
+const handleSizeChange = (newSize) => {
+    pageSize.value = newSize;
+    resetLoadSizes();
+}
+
+const handleCurrentChange = (newPage) => {
+    currentPage.value = newPage;
+    resetLoadSizes();
+}
+
+// 重置所有分类的加载状态
+const resetLoadSizes = () => {
+    categoryLoadSizes.value = {};
+}
+
+// 处理播放事件
+const handlePlay = (v) => {
+    emit('handle-play', v);
+}
+
+// 处理删除事件
+const handleDelete = (v, item) => {
+    emit('handle-delete', v, item);
+}
 </script>
+<style scoped>
+.musiclist_wraper {
+    display: flex;
+    align-items: start;
+    position: relative;
+    width: 50vw;
+    padding: 10px 0;
+}
+
+.musiclist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.musiclist li {
+    cursor: pointer;
+    height: 38px;
+    padding: 10px;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
+
+.musiclist li:hover {
+    text-decoration: none;
+    background-color: #EEE;
+}
+
+.song_info {
+    width: 70%;
+    display: block;
+}
+
+.song_opts {
+    width: 16%;
+    margin: auto;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.loading {
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+}
+
+.pagination-block {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+</style>

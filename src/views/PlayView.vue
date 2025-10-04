@@ -24,7 +24,8 @@
         <ClassicalStyle v-if="musicListStyle == 'classical'" @handle-play="handlePlay" @handle-delete="handleDelete"></ClassicalStyle>
         <AccordionStyle v-else-if="musicListStyle == 'accordion'" @handle-play="handlePlay" @handle-delete="handleDelete"></AccordionStyle>
         <Player :currentTrack="currentTrack" @next-track="nextTrack" @prev-track="prevTrack" @random-track="randomTrack"
-            @handle-play="handlePlay" @updateCurrentTrack="updateCurrentTrack" >
+            @handle-play="handlePlay" @updateCurrentTrack="updateCurrentTrack" 
+            @update:favoriteSong = "updateFavoriteSong" >
         </Player>
 
     </div>
@@ -262,6 +263,15 @@ const handlePlay = (name) => {
             // Save the current track to local storage
             localStorage.setItem('currentTrack', JSON.stringify(currentTrack.value))
         })
+}
+const updateFavoriteSong = (name) => {
+    const favoriteSong = musicList.value['收藏'];
+        if (favoriteSong.value.includes(name)) {
+            favoriteSong.value = favoriteSong.value.filter((item) => item !== name)
+        } else {
+            favoriteSong.value.push(name)
+        }
+
     }
 </script>
 <style lang="scss">

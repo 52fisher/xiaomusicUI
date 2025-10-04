@@ -108,6 +108,7 @@ const emit = defineEmits(['prev-track',
   'handle-play',
   'updateCurrentTrack',
   'no-scroll',
+  'update:favoriteSong',
 ])
 const playState = ref(false); //true为播放 显示暂停按钮，false为暂停 显示为播放按钮
 const volume = useStorage('volume', 0.5);
@@ -383,6 +384,7 @@ const FavoriteSong = () => {
       type: 'success',
     })
   })
+  emit('update:favoriteSong', currentTrack.value.name);
 }
 // 监听歌曲播放结束
 const handleTrackEnd = () => {

@@ -1,30 +1,8 @@
 import { ref } from "vue";
-
-// 根据fastapi生成对应接口参数信息
-// const base = "http://192.168.6.131:5678/";
-const base = "/";
-const api = ref({
-  getVolume: "getvolume?did=", // get {did}
-  setVolume: "setvolume", // post {volume , did}
-  saveSetting: "savesetting", // post {setting , did}
-  musiclist: "musiclist", // get {}
-  searchmusic: "searchmusic?name=", // get {name}
-  playingmusic: "playingmusic", // get {did}
-  cmd: "cmd", // post {cmd , did}
-  getSetting: "getsetting?need_device_list=true", //
-  getMusicList: "musiclist", // get {did}
-  getCurPlaylist: "curplaylist", // get {did}
-  delMusic: "delmusic", // post {mid , did}
-  downloadJson: "downloadjson", // get {did}
-  downloadLog: "downloadlog", // get {did}
-  playUrl: "playurl", // get {mid , did}
-  debugPlayByMusicUrl: "debug_play_by_music_url", // get {mid , did}
-  music: "music/", // get {file_path }
-  musicInfo: "musicinfo?name=", // get { name}
-});
+import api from '@/components/ApiList';
 function getVolume(did, callback = "") {
   //{"did":"568532341"}
-  const { data, error } = get(api.value.getVolume + did, (res) => {
+  const { data, error } = get(api.getVolume + did, (res) => {
     //{"ret":"OK","volume":42}
     callback && callback(res.volume);
     data.value = res.volume; //返回音量
@@ -33,7 +11,7 @@ function getVolume(did, callback = "") {
 }
 function setVolume(config) {
   //{"did":"568532341","volume":"42"}
-  post(api.value.setVolume, config, (res) => {
+  post(api.setVolume, config, (res) => {
     //{"ret":"OK","volume":42}
     res.ret == "ok" &&
       ElMessage({
@@ -45,7 +23,7 @@ function setVolume(config) {
 function getMusicList(remote=false) {
   const musicListTitle = ref([]);
   
-  const { data:musicList, error } = get(api.value.musiclist, (res) => {
+  const { data:musicList, error } = get(api.musiclist, (res) => {
     let musicKeys = Object.keys(res);
     // 删除musicKeys中的 全部 和 所有歌曲 ，添加到第一项
     musicKeys = musicKeys.filter((item) => item !== "全部" && item !== "所有歌曲");
@@ -84,7 +62,7 @@ function getMiDeviceList() {
 }
 function sendCmd(config) {
   //{"did":"568532341","cmd":"播放列表全部|嘉宾 - 张远"}
-  post(api.value.cmd, config, (res) => {
+  post(api.cmd, config, (res) => {
     //{"ret":"OK"}
     ElMessage({
       message: res.ret,
@@ -94,7 +72,7 @@ function sendCmd(config) {
 }
 function searchMusic(name) {
   const list = ref([]);
-  get(api.value.searchmusic + name, (res) => {
+  get(api.searchMusic + name, (res) => {
     //格式化成{value,label}
     list.value = res.map((item) => {
       return {
@@ -114,7 +92,7 @@ function saveSetting(config) {
   localStorage.setItem("setting", JSON.stringify(config));
   // console.log('%csrc\components\Setting.js:108 config', 'color: #007acc;', config);
   //再保存
-  post(api.value.saveSetting, toRaw(config), (res) => {
+  post(api.saveSetting, toRaw(config), (res) => {
     ElMessage({
       message: res,
       type: "success",
@@ -137,7 +115,7 @@ function useSetting() {
   }
   //如果本地没有，则从服务器获取
   //如果device_list为true，则添加参数'?need_device_list=true'
-  const { data, error } = get(api.value.getSetting,(res) => {
+  const { data, error } = get(api.getSetting,(res) => {
       localStorage.setItem("setting", JSON.stringify(res));
       results.value = res;
     }
@@ -147,7 +125,7 @@ function useSetting() {
 
 function getMusicUrl(title) {
   // let musicInfo = ref({})
-  const { data: musicInfo, error } = get(api.value.musicInfo + title);
+  const { data: musicInfo, error } = get(api.musicInfo + title);
   // console.log('%csrc\components\Setting.js:123 musicInfo', 'color: #007acc;', musicInfo);
   return {
     musicInfo,
@@ -167,7 +145,7 @@ function getCache(name, defaultValue, isNumber = false) {
 }
 function delMusic(name) {
   //删除音乐
-  post(api.value.delMusic, { name: name }, (res) => {
+  post(api.delMusic, { name: name }, (res) => {
     ElMessage({
       message: res,
       type: "success",
@@ -182,7 +160,7 @@ function get(url, callback = "") {
   const fetchData = () => {
     // reset state before fetching..
     data.value = null;
-    fetch(base + toValue(url))
+    fetch(toValue(url))
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -210,7 +188,7 @@ function get(url, callback = "") {
 }
 function post(url, data, callback) {
   // 使用fetch进行POST请求
-  fetch(base + url, {
+  fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

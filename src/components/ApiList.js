@@ -9,7 +9,6 @@ const api = {
   playingMusic: base + "playingmusic?did=", // get {did}
   sendCmd: base + "cmd", // post {cmd , did}
   getSetting: base + "getsetting?need_device_list=true", //
-  getMusicList: base + "musiclist", // get {did}
   getCurPlaylist: base + "curplaylist", // get {did}
   delMusic: base + "delmusic", // post {name}
   downloadJson: base + "downloadjson", // get {did}
