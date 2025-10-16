@@ -199,7 +199,7 @@
                             <div class="el-upload__tip">
                                 上传yt_dlp_cookies.txt文件,参考
                                 <el-link href="https://xdocs.hanxi.cc/issues/210.html" type="primary"
-                                    target="_blank" style="font-size:inherit;" :underline="false">文档</el-link>
+                                    target="_blank" style="font-size:inherit;vertical-align:baseline;" :underline="false">文档</el-link>
                             </div>
                         </template>
                     </el-upload>

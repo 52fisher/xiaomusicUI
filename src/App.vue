@@ -4,7 +4,9 @@
       <NavMenu :miEnabledDevices="miEnabledDevices" />
     </div>
     <div class="content">
+      <el-scrollbar height="90vh">
       <RouterView @updateSetting="updateSetting" :miEnabledDevices="miEnabledDevices" />
+      </el-scrollbar>
     </div>
   </div>
   <div class="loading_mask" v-loading.fullscreen.lock="loading" element-loading-text="正在缓存设置信息，请稍后"></div>
@@ -83,7 +85,6 @@ body {
   width: 50vw;
   padding: 20px;
   margin: 0 30px;
-  overflow: hidden;
 }
 
 .loading_mask {
@@ -93,8 +94,11 @@ body {
 }
 
 @media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
   .nav {
-    width: auto;
+    width: 100%;
   }
 }
 </style>

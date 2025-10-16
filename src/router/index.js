@@ -73,7 +73,25 @@ const router = createRouter({
         requiresAuth: true,
         title: '设备'
       }
-    }
+    },
+    {
+      path: '/M3u2Json',
+      name: 'M3u2Json',
+      component: () => import('@/views/M3u2Json.vue'),
+      meta: {
+        requiresAuth: true,
+        title: 'M3U2JSON'
+      }
+    },
+    {
+      path: '/DownloadTool',
+      name: 'DownloadTool',
+      component: () => import('@/views/DownloadTool.vue'),
+      meta: {
+        requiresAuth: true,
+        title: '歌曲下载工具'
+      }
+    },
   ]
 })
 
