@@ -100,5 +100,10 @@ body {
   .nav {
     width: 100%;
   }
+  .content {
+  width: 90vw;
+  padding: 20px;
+  margin: 0 30px;
+}
 }
 </style>

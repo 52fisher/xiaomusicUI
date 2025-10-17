@@ -802,4 +802,55 @@ watch(isMiniPlayer, (value) => {
   }
 
 }
+
+// 响应式设计 - 平板设备
+@media screen and (max-width: 768px) {
+  .music_player_wrapper {
+    .music_info {
+      width: 15vw;
+      font-size: calc(var(--fz) * 0.7);
+    }
+    
+    .volume {
+      width: 12vw;
+    }
+    
+    .controls_pannel {
+      width: 40vw!important;
+      gap: 3vw;
+    }
+  }
+}
+
+// 响应式设计 - 移动设备
+@media screen and (max-width: 480px) {
+  .music_player_wrapper {
+    // 在小屏幕上隐藏歌曲信息
+    .music_info {
+      display: none;
+    }
+    .progress_bar {
+      display: none;
+    }
+    // 在小屏幕上隐藏音量调整
+    .volume {
+      display: none;
+    }
+    
+    // 调整控制按钮区域大小
+    .controls_pannel {
+      width: 60vw!important;
+    }
+    
+    // 调整进度条区域大小
+    .progress_bar {
+      width: 40vw;
+    }
+    
+    // 调整图标大小
+    .music_player_box {
+      --size: 60px;
+    }
+  }
+}
 </style>

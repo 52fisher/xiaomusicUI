@@ -275,10 +275,17 @@ const updateFavoriteSong = (name) => {
     }
 </script>
 <style lang="scss">
+.palyer_wrapper {
+    padding: 20px;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
 .options {
     display: flex;
     justify-content: space-evenly;
     align-items: right;
+    margin-bottom: 20px;
 
     .opts_search {
         margin-right: 20px;
@@ -333,9 +340,8 @@ const updateFavoriteSong = (name) => {
             .song_opts {
                 width: 16%;
                 margin: auto;
-                display: none;
                 //内元素间距隔开
-
+                display: none;
                 justify-content: space-evenly;
                 align-items: center;
             }
@@ -385,10 +391,105 @@ const updateFavoriteSong = (name) => {
     min-height: 480px;
 }
 
-//媒体查询，宽度小于1200px时 .musiclist_wraper .musiclist 的宽度设置为300px
+// 移动端响应式样式 - 三级断点设计
+
+// 大型平板设备（1200px以下）
 @media screen and (max-width: 1200px) {
+    .musiclist_wraper {
+        width: 80vw!important;
+    }
     .musiclist_wraper .musiclist {
         width: 300px;
+    }
+}
+
+// 平板设备（768px以下）
+@media screen and (max-width: 768px) {
+    .palyer_wrapper {
+        padding: 10px;
+    }
+    
+    .options {
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .opts_search {
+        margin: 0 auto;
+    }
+    
+    .el-select {
+        width: 100% !important;
+        max-width: 250px;
+    }
+    
+    .musiclist_wraper {
+        width: 100%!important;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .musiclist_wraper .musiclist {
+        width: 100%;
+        max-width: 500px;
+    }
+    
+    .el-collapse {
+        width: 100% !important;
+        max-width: 500px !important;
+    }
+    
+    .tabs {
+        min-height: auto;
+        height: calc(100vh - 200px);
+    }
+}
+
+// 手机设备（480px以下）
+@media screen and (max-width: 480px) {
+        .musiclist_wraper {
+        width: 100%!important;
+    }
+    .palyer_wrapper {
+        padding: 5px;
+    }
+    
+    .options {
+        gap: 5px;
+    }
+    
+    .el-button {
+        width: 100%;
+        max-width: 150px;
+    }
+    
+    .device_icon {
+        display: flex;
+        justify-content: center;
+    }
+    
+    .music_control .current_name {
+        font-size: 14px;
+    }
+    
+    audio {
+        width: 100% !important;
+    }
+    
+    .control_pannel {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-around;
+        min-height: auto;
+        margin-top: 10px;
+    }
+    
+    // 确保触摸目标足够大
+    .song_opts svg {
+        width: 24px;
+        height: 24px;
     }
 }
 </style>
