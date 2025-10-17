@@ -38,6 +38,7 @@
     </div>
 </template>
 <script setup>
+import { ref, computed, watch, onMounted } from 'vue';
 import { useStorage } from '@vueuse/core';
 import IconDelete from './icons/IconDelete.vue';
 import useMusicList from './useMusicList';
@@ -70,37 +71,79 @@ const total = computed(() => {
 })
 
 // 渲染的音乐列表，按需加载每个分类下的歌曲
+// 修复：添加当前展开分类的加载状态管理
+const expandedCategories = ref(new Set());
+
+// 修复：监听分类展开/折叠状态变化
+watch(currentMusicListName, (newCategory, oldCategory) => {
+    if (oldCategory && oldCategory !== newCategory) {
+        // 移除旧分类的展开状态
+        expandedCategories.value.delete(oldCategory);
+    }
+    if (newCategory) {
+        // 添加新分类的展开状态
+        expandedCategories.value.add(newCategory);
+        // 确保展开的分类有加载状态
+        if (!categoryLoadSizes.value[newCategory]) {
+            categoryLoadSizes.value[newCategory] = batchSize;
+        }
+    }
+});
+
+// 修复：优化渲染的音乐列表，只加载当前展开分类的歌曲
 const renderMusicList = computed(() => {
     let music_list = {};
     
     for (let i = startIndex.value; i < endIndex.value; i++) {
         const key = musicTitleList.value[i];
         if (key && musicList.value[key]) {
-            // 获取该分类当前应加载的数量
-            const loadSize = categoryLoadSizes.value[key] || batchSize;
-            // 只加载指定数量的歌曲
-            music_list[key] = musicList.value[key].slice(0, loadSize);
+            // 只加载当前展开分类的歌曲
+            if (expandedCategories.value.has(key)) {
+                const loadSize = categoryLoadSizes.value[key] || batchSize;
+                music_list[key] = musicList.value[key].slice(0, loadSize);
+            } else {
+                // 未展开的分类只加载少量歌曲或不加载，减少性能消耗
+                music_list[key] = musicList.value[key].slice(0, 1);
+            }
         }
     }
     
     return music_list;
-})
+});
+
+// 修复：在mounted钩子中初始化展开状态
+onMounted(() => {
+    // 初始化当前选中分类的展开状态
+    if (currentMusicListName.value) {
+        expandedCategories.value.add(currentMusicListName.value);
+        if (!categoryLoadSizes.value[currentMusicListName.value]) {
+            categoryLoadSizes.value[currentMusicListName.value] = batchSize;
+        }
+    }
+});
 
 // 加载更多歌曲
+// 修复：优化加载更多函数，添加节流控制
+let loadingTimeout = null;
 const loadMore = (category) => {
     if (isListFullyLoaded(category)) return;
     
-    // 更新该分类的加载数量
-    const currentSize = categoryLoadSizes.value[category] || batchSize;
-    const totalItems = musicList.value[category]?.length || 0;
-    const newSize = Math.min(currentSize + batchSize, totalItems);
+    // 节流控制，避免短时间内多次触发
+    if (loadingTimeout) return;
     
-    categoryLoadSizes.value[category] = newSize;
-    
-    // 如果已经加载了所有歌曲，显示提示
-    if (newSize >= totalItems) {
-        ElMessage({ message: `已加载完${category}分类的所有歌曲`, type: 'info', duration: 1500 });
-    }
+    loadingTimeout = setTimeout(() => {
+        const currentSize = categoryLoadSizes.value[category] || batchSize;
+        const totalItems = musicList.value[category]?.length || 0;
+        const newSize = Math.min(currentSize + batchSize, totalItems);
+        
+        categoryLoadSizes.value[category] = newSize;
+        
+        if (newSize >= totalItems) {
+            ElMessage({ message: `已加载完${category}分类的所有歌曲`, type: 'info', duration: 1500 });
+        }
+        
+        loadingTimeout = null;
+    }, 200);
 }
 
 // 检查列表是否已完全加载
